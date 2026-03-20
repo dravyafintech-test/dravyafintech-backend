@@ -2,6 +2,9 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+import os
 
 from services.auth_service import AuthService
 from dependencies import get_current_user
@@ -364,3 +367,23 @@ def update_tenant_settings(settings: dict, current_user: dict = Depends(get_curr
     if not success: raise HTTPException(status_code=400, detail=msg)
     return {"message": msg}
 
+# ---------------------------------------------------------
+# 🌐 ફ્રન્ટએન્ડ (ડેશબોર્ડ) અને સ્ટેટિક ફાઈલો (JS/CSS) સર્વ કરવાનો રૂટ
+# ---------------------------------------------------------
+
+# ૧. JS અને CSS ફાઈલો (assets ફોલ્ડર) ને સર્વ કરવા માટેનું સેટિંગ
+if os.path.exists("assets"):
+    app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+
+# ૨. મેઈન પેજ (index.html) બતાવવાનો રૂટ
+@app.get("/")
+def serve_dashboard():
+    # ⚠️ Render માટેનો સાચો રસ્તો (Absolute ની જગ્યાએ Relative path)
+    index_path = "templates/index.html" 
+    if os.path.exists(index_path):
+        with open(index_path, 'r', encoding='utf-8') as f:
+            return HTMLResponse(content=f.read())
+    return {"message": "Dravya FinTech Backend is Live! (Upload your frontend files)"}
+
+from a2wsgi import ASGIMiddleware
+app = ASGIMiddleware(app)
