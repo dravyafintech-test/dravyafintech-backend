@@ -379,7 +379,7 @@ if os.path.exists("assets"):
 @app.get("/")
 def serve_dashboard():
     # ⚠️ Render માટેનો સાચો રસ્તો (Absolute ની જગ્યાએ Relative path)
-    index_path = "templates/index.html" 
+    index_path = "index.html" 
     if os.path.exists(index_path):
         with open(index_path, 'r', encoding='utf-8') as f:
             return HTMLResponse(content=f.read())
