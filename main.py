@@ -384,6 +384,3 @@ def serve_dashboard():
         with open(index_path, 'r', encoding='utf-8') as f:
             return HTMLResponse(content=f.read())
     return {"message": "Dravya FinTech Backend is Live! (Upload your frontend files)"}
-
-from a2wsgi import ASGIMiddleware
-app = ASGIMiddleware(app)
